@@ -1,8 +1,3 @@
-Saudi-Yemen Situation Monitor (Netlify)
-Folder layout:
-  public/index.html                 the dashboard
-  netlify/functions/api.mjs         the X connection (keeps your token private)
-  netlify.toml                      Netlify settings
-Environment variables to add in Netlify:
-  X_BEARER_TOKEN  = your X Bearer token
-  TEAM_PASSWORD   = (optional) a password
+SaudiYemen_2 - upload everything in this folder to the ROOT of your GitHub repo.
+After upload, the repo's first page must show:  index.html, netlify.toml, netlify (folder), README.txt
+Netlify environment variable needed:  X_BEARER_TOKEN
