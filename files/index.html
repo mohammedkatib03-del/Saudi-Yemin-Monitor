@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Saudi–Yemen Situation Monitor</title>
+<style>
+:root{--bg:#eef0ea;--card:#fbfbf7;--tx:#16201d;--mu:#65706b;--bd:#d9ddd3;--en:#1d4ed8;--ar:#c2610c;--ok:#2e7d4f;--er:#c0392b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1715;--card:#16211e;--tx:#e6ece8;--mu:#8fa099;--bd:#263430;--en:#6c9cff;--ar:#f0a04b;--ok:#5fc489;--er:#ef6b5c}}
+:root[data-theme="dark"]{--bg:#0f1715;--card:#16211e;--tx:#e6ece8;--mu:#8fa099;--bd:#263430;--en:#6c9cff;--ar:#f0a04b;--ok:#5fc489;--er:#ef6b5c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 Georgia,"Noto Naskh Arabic",Tahoma,serif}
+.ui,button,input,select,.k small,.meta,.tag{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+header{padding:16px 16px 8px;max-width:1100px;margin:auto}
+h1{margin:0;font-size:22px;letter-spacing:-.01em}
+#st{margin-top:6px;font-size:13px;color:var(--mu);display:flex;align-items:center;gap:6px}
+#dot{width:9px;height:9px;border-radius:50%;background:var(--mu)}#dot.ok{background:var(--ok)}#dot.err{background:var(--er)}
+.xa{display:inline-block;margin-top:6px;font-size:13px;color:var(--en)}
+main{max-width:1100px;margin:auto;padding:8px 16px 40px;display:grid;gap:14px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+main>.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--bd)}
+button,input,select{font-size:14px;padding:7px 12px;min-height:40px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:6px}
+button{cursor:pointer}button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--en);outline-offset:2px}
+input{flex:1;min-width:140px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.k{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;color:inherit;text-decoration:none;display:block}
+.k:hover,a.row:hover{border-color:var(--en)}
+.k b{display:block;font-size:24px;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.k small{color:var(--mu)}
+.grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.p{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px;min-width:0}
+.p h2{margin:0 0 8px;font-size:15px}
+summary{cursor:pointer;font-weight:600;font-size:15px}
+canvas{width:100%;height:170px;display:block}
+.lg{display:flex;gap:14px;font:13px system-ui;color:var(--mu);margin-top:6px}
+.lg a{color:inherit;text-decoration:none}.lg a:hover,.post .t a:hover,.xl:hover{text-decoration:underline}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-inline-end:5px}
+.tags{display:grid;gap:6px}
+.tag{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;font-size:14px}
+.tag a{color:var(--tx);text-decoration:none}.tag span{color:var(--mu)}
+.tag div{grid-column:1/3;height:4px;background:var(--bd);border-radius:2px}.tag u{display:block;height:100%;border-radius:2px;background:var(--en)}
+#feed{max-height:460px;overflow-y:auto;display:grid;gap:8px}
+.post{border-inline-start:3px solid var(--en);padding:6px 10px;background:var(--bg);border-radius:0 6px 6px 0;cursor:pointer}
+.post.ar{border-inline-start-color:var(--ar)}
+.meta{font-size:12px;color:var(--mu);display:flex;gap:10px;flex-wrap:wrap}
+.post .t{margin:2px 0;overflow-wrap:anywhere}.post .t a{color:var(--tx);text-decoration:none}
+.xl{color:var(--en)}.post.ar .xl{color:var(--ar)}
+a.row{display:grid;grid-template-columns:96px 1fr 44px;gap:8px;align-items:center;font:13px system-ui;margin:5px 0;color:inherit;text-decoration:none}
+a.row div{height:8px;background:var(--bd);border-radius:4px}a.row u{display:block;height:100%;background:var(--tx);border-radius:4px}
+.note{font:12px system-ui;color:var(--mu);margin:6px 0}
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:8px}
+@media(max-width:760px){.kg{grid-template-columns:1fr}}
+.sb{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--bd)}
+.alert{display:none;background:var(--er);color:#fff;padding:8px 12px;border-radius:8px;font:600 14px system-ui}.alert.show{display:block}
+.demo{border:1px solid var(--er);color:var(--er);border-radius:8px;padding:8px 12px;font:13px/1.4 system-ui}
+#wa{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}#wa a{word-break:break-word}
+.kg h3{margin:0 0 6px;font-size:14px}
+.kl{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{display:inline-flex;align-items:center;border:1px solid var(--bd);background:var(--bg);border-radius:999px;padding:0 4px 0 10px}
+.chip input{flex:none;min-width:0;border:0;background:transparent;padding:4px 2px;min-height:34px}
+.chip button{border:0;background:transparent;padding:4px 8px;min-height:34px;color:var(--mu)}
+.kr{display:flex;gap:6px}.kr input{min-width:0}
+textarea{width:100%;font:13px ui-monospace,Menlo,monospace;padding:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:6px}
+label{font:14px system-ui;display:flex;align-items:center;gap:6px}label input{min-height:0;flex:none;min-width:0}
+ol{margin:6px 0;padding-inline-start:20px;font:13px/1.5 system-ui}code{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+</style></head><body>
+<header><h1>Saudi–Yemen Situation Monitor</h1>
+<div class="ui" id="st"><i id="dot"></i><span id="stx">Watching @mklilow. Add post links or hashtags to count them.</span></div>
+<a class="ui xa" id="xall" target="_blank" rel="noopener">Open all tracked posts on X ↗</a></header>
+<main>
+<div class="bar ui">
+<button data-l="all" class="on">All</button><button data-l="en">English</button><button data-l="ar">العربية</button>
+<input id="q" placeholder="Filter loaded posts: word or #hashtag / كلمة أو وسم" aria-label="Filter">
+<button id="pz">Pause</button><button id="dm">Demo data: On</button><button id="rf">Refresh</button>
+</div>
+<div class="demo ui" id="db"><b>SIMULATED DEMO DATA.</b> The numbers below are randomly generated so you can see how the dashboard works. Add real posts or connect a source, then turn Demo data off.</div>
+<div class="alert ui" id="al">Volume spike: posts in the last 5 minutes are well above the recent average</div>
+<section class="p ui" id="ad"><h2>➕ Add from X</h2>
+<p class="note">Paste X post links, @accounts or #hashtags (one or many). Posts appear in the feed and open on X when tapped. Accounts get a live timeline below. Hashtags are tracked and searched.</p>
+<textarea id="sa" rows="3" placeholder="https://x.com/user/status/123...&#10;@account&#10;#الحديدة"></textarea>
+<div class="bar" style="margin-top:8px"><button id="sb" class="on">Add</button><button id="sc">Clear added posts</button><span class="note" id="sm" aria-live="polite"></span></div>
+<p class="note">Tip: on a phone, tap Share on a post, copy the link, then paste it here.</p></section>
+<section class="p" id="wp" style="display:none"><h2>Your account and watched accounts (real posts from X)</h2><div id="wa"></div><p class="note">X controls these embeds. If one does not load, its link opens the account on X.</p></section>
+<details class="p ui" id="fs"><summary>🆓 Free live sources (no account or key)</summary>
+<p class="note">Pulls public posts from Mastodon and Bluesky and news headlines from GDELT, using your tracked keywords. These are not X posts, because X no longer offers free search. Works when you open the downloaded HTML file; the hosted preview blocks outside requests.</p>
+<div class="bar"><label><input type="checkbox" id="fm"> Mastodon</label><label><input type="checkbox" id="fb"> Bluesky</label><label><input type="checkbox" id="fg"> News (GDELT)</label>
+<select id="si" aria-label="Refresh interval"><option value="30">Every 30 s</option><option value="60">Every 60 s</option><option value="120">Every 2 min</option></select></div></details>
+
+<details class="p ui" id="kwp"><summary>✎ Tracked hashtags &amp; keywords (tap to edit or add)</summary>
+<p class="note">Start with # for a hashtag, or type a plain keyword or phrase. Edits change what is searched on X and every "open on X" link. Saved in this browser.</p>
+<div class="kg">
+<div><h3>English</h3><div class="kl" id="ke"></div><div class="kr"><input id="ne" placeholder="#Hodeidah or keyword" aria-label="Add English keyword"><button data-add="en">Add</button></div></div>
+<div><h3>العربية</h3><div class="kl" id="ka"></div><div class="kr"><input id="na" dir="rtl" placeholder="#الحديدة أو كلمة" aria-label="Add Arabic keyword"><button data-add="ar">إضافة</button></div></div>
+<div><h3>X accounts to watch</h3><div class="kl" id="kx"></div><div class="kr"><input id="nx" placeholder="@yourhandle" aria-label="Add X account"><button data-add="acc">Add</button></div></div>
+</div><p class="note" id="km" aria-live="polite"></p><button id="kreset">Reset to defaults</button> <button id="kshare">Copy team link</button></details>
+<div class="kpis ui" id="kp"></div>
+<div class="grid">
+<section class="p"><h2>Posts per minute (last 60 min)</h2><canvas id="cv"></canvas>
+<div class="lg"><a id="le" target="_blank" rel="noopener"><i style="background:var(--en)"></i>English ↗</a><a id="la" target="_blank" rel="noopener"><i style="background:var(--ar)"></i>Arabic ↗</a></div></section>
+<section class="p"><h2>Sentiment (keyword-based)</h2><div class="sb" id="sb"></div><div class="lg" id="sl"></div><h2 style="margin-top:14px">Topics (keyword match)</h2><div id="ct"></div></section>
+</div>
+<div class="grid">
+<section class="p"><h2>Live feed</h2><div id="feed" aria-live="polite"></div></section>
+<section class="p"><h2>Trending hashtags</h2><div class="tags" id="tg"></div></section>
+</div>
+<details class="p ui" id="cfg"><summary>⚡ X API connection (paid, for automatic X posts)</summary>
+<p class="note">If your team hosts this page with x-monitor-worker.js, the X token lives on that host: just enter the team password. Each X refresh runs up to 3 searches of 20 posts (about $0.30 at most). The host caches results, so more teammates do not cost more.</p>
+<div class="bar"><input id="su" placeholder="Helper address (blank if you opened this page from it)" aria-label="Helper address"><input id="tp" type="password" autocomplete="off" placeholder="Team password" aria-label="Team password"><input id="tk" type="password" autocomplete="off" placeholder="X Bearer token (only if the host has none)" aria-label="X Bearer token">
+<select id="xi" aria-label="X refresh interval"><option value="300">X refresh: 5 min</option><option value="900">15 min</option><option value="1800">30 min</option><option value="3600">60 min</option></select><button id="cb">Connect</button></div>
+<p class="note" id="cm"></p></details>
+<p class="note">Posts come from the sources you enable: free public sources (Mastodon, Bluesky, GDELT news) and, optionally, X recent search through your own API token. Topics are simple keyword matches, not sentiment analysis. Counts reflect posts loaded in this session. Sentiment and topics are simple keyword-based estimates. Demo posts are randomly generated.</p>
+</main>
+<script>
+var DEF={en:['#Yemen','#Houthis','#SaudiArabia','#Saudi','#RedSea','#Ceasefire','#Sanaa','#Aden','#Marib','#Jazan','#Najran','#YemenCrisis'],ar:['#اليمن','#الحوثيين','#السعودية','#صنعاء','#عدن','#مأرب','#جازان','#نجران','#التحالف','#وقف_إطلاق_النار','#البحر_الأحمر','#السلام_في_اليمن'],acc:[]};
+var K=JSON.parse(JSON.stringify(DEF)),cfg={url:'',sec:60,tok:'',team:'',xsec:1800,free:{m:true,b:true,g:true}},P=new Map(),S={lang:'all',q:'',pause:false,on:false,t:null},QEN='',QAR='',QALL='',QACC='';
+var TP={Diplomacy:[/ceasefire|truce|talks|negotiat|هدنة|وقف إطلاق|مفاوضات|محادثات/i,'(Yemen OR اليمن) (ceasefire OR talks OR الهدنة OR مفاوضات)'],
+Military:[/strike|attack|missile|drone|raid|غارات|غارة|هجوم|صاروخ|مسيّرة|مسيرة/i,'(Yemen OR Houthis OR الحوثيين) (strikes OR غارات)'],
+Humanitarian:[/\baid\b|humanitarian|famine|hunger|المساعدات|إغاثة|مجاعة|إنسانية/i,'(Yemen OR اليمن) (aid OR المساعدات)'],
+Shipping:[/red sea|shipping|vessel|tanker|البحر الأحمر|ملاحة|سفينة|سفن/i,'("Red Sea" OR #RedSea OR #البحر_الأحمر) (shipping OR الملاحة)']};
+var NEG=/strike|attack|missile|drone|killed|dead|death|casualt|bomb|shell|raid|famine|hunger|crisis|escalat|threat|clash|fighting|غارة|غارات|هجوم|قتل|قتلى|ضحايا|صاروخ|مسيرة|مسيّرة|مجاعة|تصعيد|اشتباك|قصف|أزمة/i,
+POS=/ceasefire|truce|talks|peace|agreement|\baid\b|relief|reopen|release|هدنة|وقف إطلاق|سلام|اتفاق|مفاوضات|محادثات|مساعدات|إغاثة|إفراج/i;
+function sent(t){var n=NEG.test(t),p=POS.test(t);return n&&!p?-1:p&&!n?1:0}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+var DT=[['en','Talks reportedly under way to extend a truce framework.'],['en','Envoys meet in Muscat to discuss de-escalation steps.'],['en','Unconfirmed reports of renewed strikes near the border region.'],['en','Air defense alerts reported overnight, officials urge caution.'],['en','Aid agencies warn of worsening food shortages in affected governorates.'],['en','Convoy carrying medical supplies reaches Aden, relief groups say.'],['en','Shipping firms review Red Sea routes amid security concerns.'],['en','Analysts: insurance costs for Red Sea transit remain elevated.'],
+['ar','أنباء عن تحركات دبلوماسية جديدة لدعم الهدنة.'],['ar','اجتماعات في مسقط لبحث خطوات خفض التصعيد.'],['ar','تقارير غير مؤكدة عن غارات جديدة قرب المنطقة الحدودية.'],['ar','إنذارات الدفاع الجوي ليلاً والسلطات تدعو إلى الحذر.'],['ar','مناشدات لإيصال المساعدات الغذائية إلى المناطق المتضررة.'],['ar','وصول قافلة إمدادات طبية إلى عدن بحسب منظمات الإغاثة.'],['ar','شركات الشحن تراجع مساراتها في البحر الأحمر.'],['ar','تحليل: تأثير التصعيد على الملاحة وتكاليف التأمين.']];
+var DU=0;
+function dpost(when){
+ var t=pick(DT),l=t[0],ks=K[l],tags=[],n=1+(Math.random()<.5?1:0);
+ for(var i=0;i<n&&ks.length;i++){var g=ks[Math.floor(Math.pow(Math.random(),1.8)*ks.length)];if(g.charAt(0)==='#'&&tags.indexOf(g)<0)tags.push(g)}
+ return {id:'d'+(++DU),text:t[1]+(tags.length?' '+tags.join(' '):''),user:'user_'+Math.floor(1000+Math.random()*9000),created_at:new Date(when).toISOString(),lang:l,likes:Math.floor(Math.random()*Math.random()*4000),retweets:Math.floor(Math.random()*Math.random()*900),site:'Demo'};
+}
+function dclear(){Array.from(P.values()).forEach(function(p){if(p.src==='demo')P.delete(p.id)})}
+function seed(){
+ dclear();var now=Date.now(),a=[],i;
+ for(i=0;i<900;i++)a.push(dpost(now-Math.random()*36e5));
+ for(i=0;i<45;i++)a.push(dpost(now-(8+Math.random()*3)*6e4));
+ add(a,'demo');
+}
+function dtick(){
+ if(S.pause||!S.demo)return;
+ var n=Math.random()<.04?25:1+Math.floor(Math.random()*2),a=[];
+ for(var i=0;i<n;i++)a.push(dpost(Date.now()));
+ add(a,'demo');render();
+}
+function demo(on){
+ S.demo=on;sv('ymx_demo2',on?1:0);clearInterval(S.dt);
+ $('dm').textContent='Demo data: '+(on?'On':'Off');$('dm').classList.toggle('on',on);$('db').style.display=on?'':'none';
+ if(on){seed();S.dt=setInterval(dtick,2000)}else dclear();
+ render();
+}
+function ld(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var a0=ld('ymx_k2');if(a0&&Array.isArray(a0.en)&&Array.isArray(a0.ar)&&a0.en.concat(a0.ar).every(function(x){return typeof x==='string'}))K=a0;
+if(!Array.isArray(K.acc))K.acc=[];
+try{var hm=location.hash.match(/^#k=(.+)$/);if(hm){var hk=JSON.parse(decodeURIComponent(escape(atob(hm[1]))));
+ var okk=function(a){return Array.isArray(a)&&a.length<60&&a.every(function(x){return typeof x==='string'&&x.length<=40})};
+ if(hk&&okk(hk.en)&&okk(hk.ar)&&okk(hk.acc||[])){K={en:hk.en,ar:hk.ar,acc:hk.acc||[]};sv('ymx_k2',K);sv('ymx_me',1)}
+ history.replaceState(null,'',location.pathname+location.search)}}catch(e){}
+if(!ld('ymx_me')){if(K.acc.indexOf('@mklilow')<0)K.acc.unshift('@mklilow');sv('ymx_me',1);sv('ymx_k2',K)}
+var c0=ld('ymx_cfg');if(c0&&typeof c0.url==='string'){cfg.url=c0.url;cfg.sec=+c0.sec||60;if(typeof c0.tok==='string')cfg.tok=c0.tok;if(typeof c0.team==='string')cfg.team=c0.team;if(+c0.xsec>=300)cfg.xsec=+c0.xsec}
+if(c0&&c0.free&&typeof c0.free==='object')cfg.free={m:!!c0.free.m,b:!!c0.free.b,g:!!c0.free.g};
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function X(q){return 'https://x.com/search?f=live&q='+encodeURIComponent(q)}
+function lq(){return S.lang==='en'?(QEN||QALL):S.lang==='ar'?(QAR||QALL):QALL}
+function qj(a){return a.map(function(t){return t.indexOf(' ')>-1?'"'+t+'"':t}).join(' OR ')}
+function rq(){
+ var e=qj(K.en),a=qj(K.ar),ac=K.acc.map(function(h){return 'from:'+h.slice(1)}).join(' OR ');QACC=ac?'('+ac+')':'';
+ QEN=e?'('+e+') lang:en':'';QAR=a?'('+a+') lang:ar':'';
+ QALL='('+[e,a,ac].filter(Boolean).join(' OR ')+')';if(QALL==='()')QALL='Yemen';
+ $('xall').href=X(QALL);$('le').href=X(QEN||QALL);$('la').href=X(QAR||QALL);
+}
+function st(m,k){$('stx').textContent=m;$('dot').className=k||''}
+function add(list,src){
+ var n=0;
+ list.forEach(function(o){
+  var tx=String(o.text||'');if(!tx)return;
+  var id=String(o.id||('i'+Math.random().toString(36).slice(2)));if(P.has(id))return;
+  var us=String(o.user||'').replace(/^@/,''),lnk='';
+  if(typeof o.url==='string'&&/^https:\/\/[^\s"'<>]+$/.test(o.url))lnk=o.url;
+  if(!lnk&&/^\d+$/.test(id))lnk='https://x.com/'+(/^\w+$/.test(us)?us:'i/web')+'/status/'+id;
+  var d=o.created_at?new Date(o.created_at):new Date();if(isNaN(d))d=new Date();
+  P.set(id,{id:id,tx:tx,u:us,d:d,l:(o.lang==='ar'||/[\u0600-\u06FF]/.test(tx))?'ar':'en',lk:+o.likes||0,rt:+o.retweets||0,link:lnk,src:src,site:o.site||(src==='api'?'X':''),h:tx.match(/[#＃][\w\u0600-\u06FF]+/g)||[],s:sent(tx)});n++;
+ });
+ if(P.size>2000){Array.from(P.values()).sort(function(x,y){return y.d-x.d}).slice(2000).forEach(function(p){P.delete(p.id)})}
+ return n;
+}
+function fe(e){return /fetch|network|load/i.test(e.message)?'blocked or offline (open the downloaded HTML file)':e.message}
+function strip(h){return new DOMParser().parseFromString(h||'','text/html').body.textContent||''}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+async function many(urls,fn){
+ var out=[],fail=0,last=null;
+ await Promise.all(urls.map(async function(u){
+  try{var r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);fn(await r.json(),out)}catch(e){fail++;last=e}
+ }));
+ if(urls.length&&fail===urls.length)throw last;
+ return out;
+}
+async function getX(){
+ var base=cfg.url.replace(/\/+$/,'');
+ for(var q of [QEN,QAR,QACC]){
+  if(!q)continue;
+  var r=await fetch(base+'/api/search?q='+encodeURIComponent(q),{headers:{'x-bearer':cfg.tok||'','x-team':cfg.team||''}}),j=await r.json();
+  if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
+  add(j.data||[],'api');
+ }
+}
+async function getM(){
+ var t=K.en.concat(K.ar).filter(function(x){return x.charAt(0)==='#'}).slice(0,10);
+ add(await many(t.map(function(x){return 'https://mastodon.social/api/v1/timelines/tag/'+encodeURIComponent(x.slice(1))+'?limit=40'}),function(j,o){
+  j.forEach(function(s){o.push({id:'m'+s.id,text:strip(s.content),user:s.account&&s.account.acct,created_at:s.created_at,lang:s.language,likes:s.favourites_count,retweets:s.reblogs_count,url:s.url,site:'Mastodon'})})}),'free');
+}
+async function getB(){
+ var t=K.en.concat(K.ar).slice(0,8);
+ add(await many(t.map(function(x){return 'https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?limit=25&sort=latest&q='+encodeURIComponent(x)}),function(j,o){
+  (j.posts||[]).forEach(function(s){var h=s.author&&s.author.handle,rc=s.record||{};
+   o.push({id:'b'+s.uri,text:rc.text||'',user:h,created_at:rc.createdAt||s.indexedAt,lang:rc.langs&&rc.langs[0],likes:s.likeCount,retweets:s.repostCount,url:'https://bsky.app/profile/'+h+'/post/'+String(s.uri).split('/').pop(),site:'Bluesky'})})}),'free');
+}
+function gq(a){var s={};a.forEach(function(t){t=t.replace(/^#/,'').replace(/_/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2').trim();if(t)s[t]=1});return Object.keys(s).map(function(t){return t.indexOf(' ')>-1?'"'+t+'"':t}).join(' OR ')}
+async function getG(){
+ var out=[],qs=[[gq(K.en),'english'],[gq(K.ar),'arabic']],first=true;
+ for(var i=0;i<qs.length;i++){
+  if(!qs[i][0])continue;
+  if(!first)await sleep(5500);first=false;
+  var r=await fetch('https://api.gdeltproject.org/api/v2/doc/doc?mode=artlist&format=json&maxrecords=50&sort=datedesc&timespan=24h&query='+encodeURIComponent('('+qs[i][0]+') sourcelang:'+qs[i][1]));
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  var j;try{j=await r.json()}catch(e){continue}
+  (j.articles||[]).forEach(function(a){var d=a.seendate||'';
+   out.push({id:'g'+a.url,text:a.title,user:a.domain,created_at:d.length>=15?d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8)+'T'+d.slice(9,11)+':'+d.slice(11,13)+':'+d.slice(13,15)+'Z':null,url:a.url,site:'News'})});
+ }
+ add(out,'free');
+}
+function anySrc(){return S.on||cfg.free.m||cfg.free.b||cfg.free.g}
+function sched(withX){
+ clearInterval(S.t);clearInterval(S.tx);
+ if(cfg.free.m||cfg.free.b||cfg.free.g)S.t=setInterval(function(){poll('free')},cfg.sec*1000);
+ if(S.on)S.tx=setInterval(function(){poll('x')},cfg.xsec*1000);
+ if(anySrc())poll(withX?undefined:'free');else st('No source enabled');
+}
+async function poll(only){
+ if(S.pause)return;
+ var jobs=[];
+ if(S.on&&only!=='free')jobs.push(['X',getX]);
+ if(cfg.free.m&&only!=='x')jobs.push(['Mastodon',getM]);
+ if(cfg.free.b&&only!=='x')jobs.push(['Bluesky',getB]);
+ if(cfg.free.g&&only!=='x')jobs.push(['News',getG]);
+ if(!jobs.length)return;
+ var res=await Promise.allSettled(jobs.map(function(j){return j[1]()})),errs=[],ok=0;
+ res.forEach(function(r,i){if(r.status==='fulfilled')ok++;else errs.push(jobs[i][0]+': '+fe(r.reason))});
+ st((S.demo?'Demo data on · ':'')+(ok?'Live · updated '+new Date().toLocaleTimeString():'No live data')+(errs.length?' · '+errs.join(' | '):''),ok?'ok':(S.demo?'':'err'));
+ render();
+}
+async function connect(quiet){
+ var base=cfg.url.replace(/\/+$/,'');
+ try{
+  var r=await fetch(base+'/api/health',{headers:{'x-team':cfg.team||''}});if(!r.ok)throw new Error('no');var h=await r.json();
+  if(h.team&&!h.authed){$('cfg').open=true;$('cm').textContent='This helper needs the team password. Enter it above and tap Connect.';return}
+  if(!cfg.tok&&!h.env){$('cm').textContent='Helper found. Now paste your X Bearer token above and tap Connect.';return}
+  S.on=true;$('cm').textContent='Connected.';$('cfg').open=false;sched(true);
+ }catch(e){
+  S.on=false;sched();
+  if(!quiet)$('cm').textContent='Could not reach the server at '+(base||'this address')+'. Start it with node x-monitor-server.js and check the address.';
+ }
+}
+function vis(p){return(S.lang==='all'||p.l===S.lang)&&(!S.q||p.tx.toLowerCase().indexOf(S.q)>-1)}
+function render(){
+ var all=Array.from(P.values()).sort(function(a,b){return b.d-a.d});
+ var L=all.filter(function(p){return S.lang==='all'||p.l===S.lang}),now=Date.now();
+ var pm=Math.round(L.filter(function(p){return now-p.d<3e5}).length/5),neg=L.filter(function(p){return p.s<0}).length,arN=all.filter(function(p){return p.l==='ar'}).length;
+ var tc={};L.forEach(function(p){p.h.forEach(function(h){h=h.replace('＃','#');tc[h]=(tc[h]||0)+1})});
+ var tops=Object.keys(tc).sort(function(a,b){return tc[b]-tc[a]}).slice(0,10);
+ var kh=function(q){return ' class="k" target="_blank" rel="noopener" href="'+X(q)+'"'};
+ $('kp').innerHTML=
+  '<a'+kh(lq())+'><small>Posts loaded ↗</small><b>'+L.length+'</b></a>'+
+  '<a'+kh(lq())+'><small>Posts per minute ↗</small><b>'+pm+'</b></a>'+
+  '<a'+kh(lq()+' (strikes OR attack OR غارات OR هجوم)')+'><small>Negative share ↗</small><b>'+(L.length?Math.round(neg/L.length*100)+'%':'–')+'</b></a>'+
+  '<a'+kh(QAR||QALL)+'><small>Arabic share ↗</small><b>'+(all.length?Math.round(arN/all.length*100)+'%':'–')+'</b></a>';
+ var f=L.filter(vis).slice(0,30);
+ $('feed').innerHTML=f.length?f.map(function(p){
+  var hr2=p.link||X(p.h[0]||QALL);
+  return '<div class="post '+p.l+'" data-h="'+esc(hr2)+'" dir="auto"><div class="meta"><span>'+esc(p.site||'')+'</span><span>'+(p.u?'@'+esc(p.u):'')+'</span><span>'+p.d.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</span><span>↻ '+p.rt+'</span><span>♥ '+p.lk+'</span><a class="xl" target="_blank" rel="noopener" href="'+esc(hr2)+'">'+(p.link?(p.site&&p.site!=='X'?'Open ↗':'View tweet ↗'):(p.src==='demo'?'Demo post, not on X · search the topic ↗':'Find on X ↗'))+'</a></div><p class="t">'+esc(p.tx)+'</p></div>';
+ }).join(''):'<p class="note">'+(P.size?'No loaded posts match this filter.':'No counted posts yet. Counters fill from pasted post links, the free sources, or the X API. Your real timeline is in the account section above. Status: '+esc($('stx').textContent))+'</p>';
+ var mx=tops.length?tc[tops[0]]:1;
+ $('tg').innerHTML=tops.length?tops.map(function(h){return '<div class="tag"><a dir="auto" target="_blank" rel="noopener" href="'+X(h)+'">'+esc(h)+' ↗</a><span>'+tc[h]+'</span><div><u style="width:'+Math.round(tc[h]/mx*100)+'%"></u></div></div>'}).join(''):'<p class="note">Hashtags will appear as posts load.</p>';
+ var tcs=Object.keys(TP).map(function(k){return [k,L.filter(function(p){return TP[k][0].test(p.tx)}).length]});
+ var cm=Math.max.apply(null,tcs.map(function(t){return t[1]}).concat(1));
+ $('ct').innerHTML=tcs.map(function(t){return '<a class="row" target="_blank" rel="noopener" href="'+X(TP[t[0]][1])+'"><span>'+t[0]+' ↗</span><div><u style="width:'+Math.round(t[1]/cm*100)+'%"></u></div><span>'+t[1]+'</span></a>'}).join('');
+ var sc=[0,0,0];L.forEach(function(p){sc[p.s+1]++});
+ var sn=L.length||1,sl=[['Negative','er'],['Neutral','mu'],['Positive','ok']];
+ $('sb').innerHTML=sl.map(function(x,i){return '<span style="width:'+(sc[i]/sn*100)+'%;background:var(--'+x[1]+')"></span>'}).join('');
+ $('sl').innerHTML=sl.map(function(x,i){return '<span><i style="background:var(--'+x[1]+')"></i>'+x[0]+' '+Math.round(sc[i]/sn*100)+'%</span>'}).join('');
+ var r5=all.filter(function(p){return now-p.d<3e5}).length,rb=all.filter(function(p){var a=now-p.d;return a>=3e5&&a<36e5}).length/11;
+ $('al').className='alert ui'+(r5>=10&&r5>rb*2.5?' show':'');
+ draw(all,now);
+}
+function draw(all,now){
+ var cv=$('cv'),d=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+ cv.width=w*d;cv.height=h*d;var x=cv.getContext('2d');x.scale(d,d);x.clearRect(0,0,w,h);
+ var cs=getComputedStyle(document.documentElement),B={en:new Array(60).fill(0),ar:new Array(60).fill(0)};
+ all.forEach(function(p){var i=59-Math.floor((now-p.d)/6e4);if(i>=0&&i<60)B[p.l][i]++});
+ var mx=Math.max(3,Math.max.apply(null,B.en.concat(B.ar)))*1.15;
+ x.strokeStyle=cs.getPropertyValue('--bd');x.lineWidth=1;
+ for(var g=0;g<4;g++){var y=h-14-(h-24)*g/3;x.beginPath();x.moveTo(0,y);x.lineTo(w,y);x.stroke()}
+ [['en','--en'],['ar','--ar']].forEach(function(p){
+  x.strokeStyle=cs.getPropertyValue(p[1]).trim();x.lineWidth=2;x.beginPath();
+  B[p[0]].forEach(function(v,i){var px=i/59*w,py=h-14-(h-24)*v/mx;i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke();
+ });
+ if(!all.length){x.fillStyle=cs.getPropertyValue('--mu');x.font='13px system-ui';x.fillText('No data yet',10,h/2)}
+}
+/* keyword editor */
+function kc(v,l){
+ if(l==='acc'){v=String(v).trim().replace(/^@/,'').replace(/[^\w]/g,'').slice(0,15);return v?'@'+v:''}
+ v=String(v).trim().replace(/＃/g,'#').replace(/\s+/g,' ').slice(0,40);
+ if(v.charAt(0)==='#'){v='#'+v.slice(1).replace(/[^\w\u0600-\u06FF]+/g,'_').replace(/^_+|_+$/g,'');return v.length>1?v:''}
+ return v.replace(/["()]/g,'').trim();
+}
+function kdup(l,v){return K[l].some(function(t){return t.toLowerCase()===v.toLowerCase()})}
+function ked(){
+ ['en','ar','acc'].forEach(function(l){
+  var box=$({en:'ke',ar:'ka',acc:'kx'}[l]);box.textContent='';
+  K[l].forEach(function(t,i){
+   var r=document.createElement('span');r.className='chip';
+   var inp=document.createElement('input');inp.className='kv';inp.value=t;inp.size=Math.max(3,t.length);inp.dataset.l=l;inp.dataset.i=i;inp.setAttribute('aria-label','Edit keyword');if(l==='ar')inp.dir='rtl';
+   var b=document.createElement('button');b.textContent='✕';b.dataset.del=i;b.dataset.l=l;b.setAttribute('aria-label','Remove '+t);
+   r.appendChild(inp);r.appendChild(b);box.appendChild(r);
+  });
+ });
+}
+function kapply(){
+ sv('ymx_k2',K);rq();ked();racc();
+ Array.from(P.values()).forEach(function(p){if(p.src!=='imp'&&p.src!=='api')P.delete(p.id)});
+ if(S.demo)seed();
+ render();poll('free');
+}
+function kmsg(t){$('km').textContent=t}
+function kadd(l){
+ var el=$({en:'ne',ar:'na',acc:'nx'}[l]),v=kc(el.value,l);
+ if(!v){kmsg(l==='acc'?'Type an X handle like @name.':l==='en'?'Type a hashtag like #Yemen or a keyword.':'اكتب وسماً مثل #اليمن أو كلمة.');return}
+ if(kdup(l,v))kmsg('Already tracked: '+v);else{K[l].push(v);kmsg('Added '+v)}
+ el.value='';kapply();
+}
+var kp=$('kwp');
+kp.addEventListener('change',function(e){
+ var el=e.target;if(!el.classList.contains('kv'))return;
+ var l=el.dataset.l,i=+el.dataset.i,old=K[l][i],v=kc(el.value,l);
+ if(!v||(v.toLowerCase()!==old.toLowerCase()&&kdup(l,v))){el.value=old;return}
+ K[l][i]=v;kapply();
+});
+kp.addEventListener('click',function(e){
+ var b=e.target.closest('button');if(!b)return;
+ if(b.dataset.add)kadd(b.dataset.add);
+ else if(b.dataset.del!==undefined){K[b.dataset.l].splice(+b.dataset.del,1);kapply()}
+ else if(b.id==='kshare'){var lk=location.href.split('#')[0]+'#k='+btoa(unescape(encodeURIComponent(JSON.stringify(K))));if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(lk).then(function(){kmsg('Team link copied. Anyone who opens it gets this keyword list.')},function(){kmsg(lk)});else kmsg(lk)}
+ else if(b.id==='kreset'){K=JSON.parse(JSON.stringify(DEF));kmsg('Reset to defaults.');kapply()}
+});
+kp.addEventListener('keydown',function(e){var m={ne:'en',na:'ar',nx:'acc'}[e.target.id];if(e.key==='Enter'&&m)kadd(m)});
+/* add from X */
+function sid2ms(id){try{return Number((BigInt(id)>>22n)+1288834974657n)}catch(e){return Date.now()}}
+function safeDec(x){try{return decodeURIComponent(x)}catch(e){return x}}
+function savePosts(){sv('ymx_posts',Array.from(P.values()).filter(function(p){return p.src==='imp'}).slice(0,200).map(function(p){return {id:p.id,text:p.tx,user:p.u,created_at:p.d.toISOString(),likes:p.lk,retweets:p.rt,lang:p.l,url:p.link,site:'X'}}))}
+function loadSaved(){var a=ld('ymx_posts');if(Array.isArray(a))add(a.filter(function(o){return o&&typeof o.text==='string'&&/^\d+$/.test(String(o.id))}),'imp')}
+function addAcc(h){var v=kc(h,'acc');if(!v||kdup('acc',v))return false;K.acc.push(v);return true}
+async function postFrom(u,id){
+ var user=u==='i'?'':u,o={id:id,text:'X post'+(user?' by @'+user:'')+' (tap to open)',user:user,created_at:new Date(sid2ms(id)).toISOString(),likes:0,retweets:0,url:'https://x.com/'+(user||'i/web')+'/status/'+id,site:'X'},got=false;
+ try{
+  var r=await fetch('https://api.fxtwitter.com/'+(user||'i')+'/status/'+id);
+  if(r.ok){var t=(await r.json()).tweet;
+   if(t&&t.text){o.text=t.text;o.likes=+t.likes||0;o.retweets=+t.retweets||0;if(t.lang)o.lang=t.lang;if(t.author&&t.author.screen_name){o.user=t.author.screen_name;o.url='https://x.com/'+o.user+'/status/'+id}got=true}}
+ }catch(e){}
+ add([o],'imp');return got;
+}
+async function smart(){
+ var el=$('sa'),toks=el.value.split(/[\s,]+/).filter(Boolean),c={p:0,a:0,k:0,x:0,f:0},jobs=[];
+ if(!toks.length){$('sm').textContent='Paste a post link, @account or #hashtag first.';return}
+ toks.forEach(function(t){
+  var m=t.match(/^https?:\/\/(?:www\.|mobile\.)?(?:x|twitter)\.com\/(\w{1,15})\/status\/(\d+)/i),
+   h=t.match(/^https?:\/\/(?:www\.|mobile\.)?(?:x|twitter)\.com\/hashtag\/([^\s?\/]+)/i),
+   a=t.match(/^https?:\/\/(?:www\.|mobile\.)?(?:x|twitter)\.com\/(\w{1,15})\/?(?:[?#].*)?$/i);
+  if(m){c.p++;jobs.push(postFrom(m[1],m[2]).then(function(ok){if(!ok)c.f++}));return}
+  var tag=h?'#'+safeDec(h[1]):/^[#＃]/.test(t)?t:'';
+  if(tag){var l=/[\u0600-\u06FF]/.test(tag)?'ar':'en',v=kc(tag,l);if(v&&!kdup(l,v)){K[l].push(v);c.k++}else c.x++}
+  else if(a&&!/^(search|i|home|explore|hashtag|intent|share|notifications|messages|settings)$/i.test(a[1])){if(addAcc('@'+a[1]))c.a++;else c.x++}
+  else if(/^@\w{1,15}$/.test(t)){if(addAcc(t))c.a++;else c.x++}
+  else c.x++;
+ });
+ await Promise.all(jobs);
+ savePosts();
+ if(c.a||c.k)kapply();else render();
+ var msg=[];if(c.p)msg.push(c.p+' post(s)');if(c.a)msg.push(c.a+' account(s)');if(c.k)msg.push(c.k+' hashtag(s)');
+ $('sm').textContent=(msg.length?'Added '+msg.join(', ')+'. ':'Nothing added. ')+(c.x?'Skipped '+c.x+' (not a post link, @account or #hashtag, or already added). ':'')+(c.f?c.f+' post(s) added as links only; open the downloaded HTML file to load their text.':'');
+ el.value='';
+}
+function racc(){
+ var box=$('wa');box.textContent='';
+ var dark=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches;
+ K.acc.forEach(function(h){
+  var a=document.createElement('a');a.className='twitter-timeline';a.href='https://twitter.com/'+h.slice(1);a.target='_blank';a.rel='noopener';
+  a.setAttribute('data-height','420');a.setAttribute('data-dnt','true');a.setAttribute('data-theme',dark?'dark':'light');a.textContent='Posts by '+h+' (open on X ↗)';
+  var d=document.createElement('div'),ln=document.createElement('p');ln.className='note ui';
+  ln.innerHTML='<b>'+h+'</b> · <a href="https://x.com/'+h.slice(1)+'" target="_blank" rel="noopener">Profile ↗</a> · <a href="'+X(h)+'" target="_blank" rel="noopener">Mentions ↗</a>';
+  d.appendChild(ln);d.appendChild(a);box.appendChild(d);
+ });
+ $('wp').style.display=K.acc.length?'':'none';
+ if(!K.acc.length)return;
+ if(window.twttr&&twttr.widgets)twttr.widgets.load(box);
+ else if(!S.tw){S.tw=1;var sc=document.createElement('script');sc.src='https://platform.twitter.com/widgets.js';sc.async=true;sc.onload=function(){if(window.twttr&&twttr.widgets)twttr.widgets.load($('wa'))};document.head.appendChild(sc)}
+}
+/* controls */
+document.querySelectorAll('[data-l]').forEach(function(b){if(b.parentNode.className.indexOf('bar')<0)return;b.onclick=function(){
+ S.lang=b.dataset.l;document.querySelectorAll('.bar>[data-l]').forEach(function(x){x.classList.toggle('on',x===b)});render()}});
+$('q').oninput=function(e){S.q=e.target.value.trim().toLowerCase();render()};
+$('pz').onclick=function(e){S.pause=!S.pause;e.target.textContent=S.pause?'Resume':'Pause';e.target.classList.toggle('on',S.pause);if(!S.pause)poll('free')};
+$('cb').onclick=function(){
+ var u=$('su').value.trim();
+ if(u&&!/^https?:\/\//.test(u)){$('cm').textContent='Address must start with http:// or https://';return}
+ cfg.url=u;cfg.tok=$('tk').value.trim();cfg.team=$('tp').value.trim();cfg.xsec=+$('xi').value||1800;cfg.sec=+$('si').value||60;sv('ymx_cfg',cfg);connect(false);
+};
+$('feed').onclick=function(e){
+ if(e.target.closest('a'))return;var p=e.target.closest('.post');
+ if(p&&p.dataset.h)window.open(p.dataset.h,'_blank','noopener');
+};
+window.onresize=function(){render()};
+$('su').value=cfg.url;$('tk').value=cfg.tok;$('tp').value=cfg.team;$('xi').value=String(cfg.xsec);$('si').value=String(cfg.sec);
+if(window.innerWidth>760)kp.open=true;
+rq();ked();racc();loadSaved();
+$('dm').onclick=function(){demo(!S.demo)};
+$('rf').onclick=function(){poll()};
+demo(ld('ymx_demo2')===1);render();
+$('sb').onclick=smart;
+$('sc').onclick=function(){Array.from(P.values()).forEach(function(p){if(p.src==='imp')P.delete(p.id)});sv('ymx_posts',[]);$('sm').textContent='Cleared added posts.';render()};
+['m','b','g'].forEach(function(k){var el=$('f'+k);el.checked=!!cfg.free[k];el.onchange=function(){cfg.free[k]=el.checked;sv('ymx_cfg',cfg);if(!el.checked)Array.from(P.values()).forEach(function(p){if({m:'Mastodon',b:'Bluesky',g:'News'}[k]===p.site)P.delete(p.id)});render();sched()}});
+$('si').onchange=function(){cfg.sec=+this.value||60;sv('ymx_cfg',cfg);sched()};
+sched();
+if(cfg.url||location.protocol.indexOf('http')===0)connect(true);
+</script></body></html>
