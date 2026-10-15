@@ -196,22 +196,37 @@ async function many(urls,fn){
  if(urls.length&&fail===urls.length)throw last;
  return out;
 }
+var XR=0;
+function xchunks(a,sfx){
+ var out=[],cur=[],len=0;
+ a.forEach(function(t){var q=t.indexOf(' ')>-1?'"'+t+'"':t;
+  if(cur.length&&len+q.length+4>330){out.push(cur);cur=[];len=0}
+  cur.push(q);len+=q.length+4});
+ if(cur.length)out.push(cur);
+ return out.map(function(c){return '('+c.join(' OR ')+')'+sfx});
+}
+function xjobs(){
+ return xchunks(K.en,' lang:en').concat(xchunks(K.ar,' lang:ar'),xchunks(K.acc.map(function(h){return 'from:'+h.slice(1)}),''));
+}
 async function getX(){
- var base=cfg.url.replace(/\/+$/,'');
- for(var q of [QEN,QAR,QACC]){
-  if(!q)continue;
+ var base=cfg.url.replace(/\/+$/,''),qs=xjobs();if(!qs.length)return;
+ var n=Math.min(3,qs.length),pick=[];
+ for(var i=0;i<n;i++)pick.push(qs[(XR+i)%qs.length]);
+ XR=(XR+n)%qs.length;
+ for(var q of pick){
   var r=await fetch(base+'/api/search?q='+encodeURIComponent(q),{headers:{'x-bearer':cfg.tok||'','x-team':cfg.team||''}}),j=await r.json();
   if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
   add(j.data||[],'api');
  }
 }
+function mix(a,b){var o=[],n=Math.max(a.length,b.length);for(var i=0;i<n;i++){if(i<a.length)o.push(a[i]);if(i<b.length)o.push(b[i])}return o}
 async function getM(){
- var t=K.en.concat(K.ar).filter(function(x){return x.charAt(0)==='#'}).slice(0,10);
+ var hs=function(x){return x.charAt(0)==='#'},t=mix(K.en.filter(hs),K.ar.filter(hs)).slice(0,12);
  add(await many(t.map(function(x){return 'https://mastodon.social/api/v1/timelines/tag/'+encodeURIComponent(x.slice(1))+'?limit=40'}),function(j,o){
   j.forEach(function(s){o.push({id:'m'+s.id,text:strip(s.content),user:s.account&&s.account.acct,created_at:s.created_at,lang:s.language,likes:s.favourites_count,retweets:s.reblogs_count,url:s.url,site:'Mastodon'})})}),'free');
 }
 async function getB(){
- var t=K.en.concat(K.ar).slice(0,8);
+ var t=mix(K.en,K.ar).slice(0,10);
  add(await many(t.map(function(x){return 'https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?limit=25&sort=latest&q='+encodeURIComponent(x)}),function(j,o){
   (j.posts||[]).forEach(function(s){var h=s.author&&s.author.handle,rc=s.record||{};
    o.push({id:'b'+s.uri,text:rc.text||'',user:h,created_at:rc.createdAt||s.indexedAt,lang:rc.langs&&rc.langs[0],likes:s.likeCount,retweets:s.repostCount,url:'https://bsky.app/profile/'+h+'/post/'+String(s.uri).split('/').pop(),site:'Bluesky'})})}),'free');
@@ -326,17 +341,22 @@ function ked(){
   });
  });
 }
+function kmatch(p){
+ var t=p.tx.toLowerCase(),u=(p.u||'').toLowerCase();
+ return K.en.concat(K.ar).some(function(k){return t.indexOf(k.toLowerCase())>-1})||K.acc.some(function(a){return a.slice(1).toLowerCase()===u});
+}
 function kapply(){
- sv('ymx_k2',K);rq();ked();racc();
- Array.from(P.values()).forEach(function(p){if(p.src!=='imp'&&p.src!=='api')P.delete(p.id)});
+ sv('ymx_k2',K);rq();ked();racc();XR=0;
+ Array.from(P.values()).forEach(function(p){if(p.src!=='imp'&&!(p.src==='api'&&kmatch(p)))P.delete(p.id)});
  if(S.demo)seed();
  render();poll('free');
+ if(S.on){clearTimeout(S.kt);S.kt=setTimeout(function(){poll('x')},4000)}
 }
 function kmsg(t){$('km').textContent=t}
 function kadd(l){
  var el=$({en:'ne',ar:'na',acc:'nx'}[l]),v=kc(el.value,l);
  if(!v){kmsg(l==='acc'?'Type an X handle like @name.':l==='en'?'Type a hashtag like #Yemen or a keyword.':'اكتب وسماً مثل #اليمن أو كلمة.');return}
- if(kdup(l,v))kmsg('Already tracked: '+v);else{K[l].push(v);kmsg('Added '+v)}
+ if(kdup(l,v))kmsg('Already tracked: '+v);else{K[l].push(v);kmsg('Added '+v+(S.on?' · searching X in a few seconds':''))}
  el.value='';kapply();
 }
 var kp=$('kwp');
